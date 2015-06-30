@@ -5,14 +5,12 @@
 		http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- http://repo.maven.apache.org/maven2 -->
-
     <parent>
-        <groupId>net.imagej</groupId>
-        <artifactId>pom-imagej</artifactId>
-        <version>9.0.0</version>
+        <groupId>sc.fiji</groupId>
+        <artifactId>pom-fiji</artifactId>
+        <version>10.0.1</version>
         <relativePath />
-    </parent>
+    </parent>    
 
     <groupId>org.janelia</groupId>
     <artifactId>H5J_Loader_Plugin</artifactId>
@@ -47,12 +45,11 @@
         <main-class>H5J_Loader</main-class>
     </properties>
 
-    <!-- Establishing a maven repo to ensure the batteries_included file is found. -->
     <repositories>
+        <!-- NB: for project parent -->
         <repository>
-            <id>FileSystem-Repository</id>
-            <name>Filesystem Local Repository</name>
-            <url>file://fs_maven_repo</url>
+            <id>imagej.public</id>
+            <url>http://maven.imagej.net/content/groups/public</url>
         </repository>
     </repositories>
     
@@ -63,11 +60,11 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.systemsx.cisd.hdf5</groupId>
-            <artifactId>sis-jhdf5-batteries_included</artifactId>
-            <version>14.12</version>
+            <groupId>cisd</groupId>
+            <artifactId>jhdf5</artifactId>
+            <version>14.12.0</version>
         </dependency>
-
+        
         <dependency>
             <groupId>org.bytedeco.javacpp-presets</groupId>
             <artifactId>ffmpeg</artifactId>
