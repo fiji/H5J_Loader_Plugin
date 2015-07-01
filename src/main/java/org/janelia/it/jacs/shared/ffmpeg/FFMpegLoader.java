@@ -1,13 +1,10 @@
-/**
- * Created by bolstadm on 10/23/14.
- *
- * Modeled on the javacpp tutorial with a fair amount of lifting from the javacv
- * FFmpegFrameGrabber class
+/*
+ * Copyright 2010 Howard Hughes Medical Institute.
+ * All rights reserved.
+ * Use is subject to Janelia Farm Research Campus Software Copyright 1.1
+ * license terms ( http://license.janelia.org/license/jfrc_copyright_1_1.html ).
  */
-
 package org.janelia.it.jacs.shared.ffmpeg;
-// Used by me for testing outside of the workstation
-//package ffmpeg;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;

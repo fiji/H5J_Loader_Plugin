@@ -1,9 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2010 Howard Hughes Medical Institute.
+ * All rights reserved.
+ * Use is subject to Janelia Farm Research Campus Software Copyright 1.1
+ * license terms ( http://license.janelia.org/license/jfrc_copyright_1_1.html ).
  */
-
 package org.janelia.it.jacs.shared.ffmpeg;
 
 import org.bytedeco.javacpp.BytePointer;
