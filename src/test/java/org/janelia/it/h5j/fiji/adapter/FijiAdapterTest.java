@@ -22,10 +22,10 @@ import static org.junit.Assert.*;
  * @author fosterl
  */
 public class FijiAdapterTest {
-    private static final String TESTFILE = "";
-    private static final int TEST_BPP = 3;
-    private static final int TEST_HEIGHT = 1;
-    private static final int TEST_WIDTH = 4;
+    private static final String TESTFILE = "src/test/resources/test.h5j";
+    private static final int EXPECT_BPP = 4;
+    private static final int EXPECT_WIDTH = 120;
+    private static final int EXPECT_HEIGHT = 96;
     
     private FijiAdapter fijiAdapter;
     
@@ -60,8 +60,8 @@ public class FijiAdapterTest {
     @Test
     public void getImagePlus() throws Exception {
         ImagePlus imagePlus = fijiAdapter.getImagePlus(new File(TESTFILE));
-        assertEquals(imagePlus.getBytesPerPixel(), TEST_BPP);
-        assertEquals(imagePlus.getHeight(), TEST_HEIGHT);
-        assertEquals(imagePlus.getWidth(), TEST_WIDTH);
+        assertEquals("Bytes-per-pixel fails to match", EXPECT_BPP, imagePlus.getBytesPerPixel());
+        assertEquals("Height not as expected", EXPECT_HEIGHT, imagePlus.getHeight());
+        assertEquals("Width not as expected", EXPECT_WIDTH, imagePlus.getWidth());
     }
 }
