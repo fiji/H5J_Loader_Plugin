@@ -20,10 +20,10 @@
 
     <groupId>org.janelia</groupId>
     <artifactId>H5J_Loader_Plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>plugins/h5j_reader.jar</name>
-    <description>A Maven project implementing an ImageJ 1.x plugin</description>
+    <description>A Maven project implementing an ImageJ plugin</description>
 
     <developers>
         <developer>
