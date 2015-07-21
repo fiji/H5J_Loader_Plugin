@@ -23,6 +23,10 @@
 
     <name>plugins/H5J_Loader_Plugin.jar</name>
     <description>A Maven project implementing an ImageJ plugin</description>
+    <organization>
+        <name>HHMI Janelia Research Campus</name>
+        <url>https://www.janelia.org/</url>
+    </organization>
 
     <developers>
         <developer>
