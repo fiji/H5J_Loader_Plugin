@@ -41,10 +41,10 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/imagej/h5j_loader-ij1-plugin</connection>
-        <developerConnection>scm:git:git@github.com:imagej/h5j_loader-ij1-plugin</developerConnection>
+        <connection>scm:git:git://github.com/fiji/h5j_loader-plugin</connection>
+        <developerConnection>scm:git:git@github.com:fiji/h5j_loader-plugin</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/imagej/h5j_loader-ij1-plugin</url>
+        <url>https://github.com/fiji/h5j_loader-plugin</url>
     </scm>
 
     <properties>
