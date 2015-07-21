@@ -27,6 +27,13 @@
         <name>HHMI Janelia Research Campus</name>
         <url>https://www.janelia.org/</url>
     </organization>
+    <licenses>
+        <license>
+            <name>Janelia Farm Research Campus Software Copyright 1.1</name>
+            <distribution>repo</distribution>
+            <url>http://license.janelia.org/license/jfrc_copyright_1_1.html</url>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
