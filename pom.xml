@@ -22,7 +22,7 @@
     <artifactId>H5J_Loader_Plugin</artifactId>
     <version>1.0.1-SNAPSHOT</version>
 
-    <name>plugins/h5j_reader.jar</name>
+    <name>plugins/H5J_Loader_Plugin.jar</name>
     <description>A Maven project implementing an ImageJ plugin</description>
 
     <developers>
