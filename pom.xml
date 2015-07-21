@@ -45,6 +45,10 @@
         <tag>HEAD</tag>
         <url>https://github.com/fiji/h5j_loader-plugin</url>
     </scm>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://jenkins.imagej.net/job/h5j_loader-plugin/</url>
+    </ciManagement>
 
     <properties>
         <main-class>H5J_Loader</main-class>
