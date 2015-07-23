@@ -51,18 +51,18 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/fiji/h5j_loader-plugin</connection>
-        <developerConnection>scm:git:git@github.com:fiji/h5j_loader-plugin</developerConnection>
+        <connection>scm:git:git://github.com/fiji/H5j_loader-plugin</connection>
+        <developerConnection>scm:git:git@github.com:fiji/H5J_Loader_Plugin</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/fiji/h5j_loader-plugin</url>
+        <url>https://github.com/fiji/H5J_Loader_Plugin</url>
     </scm>
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/fiji/h5j_loader-plugin/issues</url>
+        <url>https://github.com/fiji/H5J_Loader_Plugin/issues</url>
     </issueManagement>
     <ciManagement>
         <system>Jenkins</system>
-        <url>http://jenkins.imagej.net/job/h5j_loader-plugin/</url>
+        <url>http://jenkins.imagej.net/job/H5J_Loader_Plugin/</url>
     </ciManagement>
 
     <properties>
