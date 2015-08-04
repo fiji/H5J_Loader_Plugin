@@ -16,6 +16,11 @@ import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import org.janelia.it.jacs.shared.ffmpeg.*;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This will pull H5j data into Fiji's required internal format.
@@ -64,17 +69,17 @@ public class FijiAdapter {
 	public ImagePlus getMultiChannelImagePlus(File inputFile) throws Exception {
 		// Need here, to pull the values IN from the input file, per H5J
 		// read mechanism.
-		H5JLoader loader = new H5JLoader(inputFile.getAbsolutePath());
+		final H5JLoader loader = new H5JLoader(inputFile.getAbsolutePath());
 		FileInfo fileInfo = null;
 		ImagePlus rtnVal = null;
 
 		// Iterate over all channels.
 		int channelNum = 1;  // Output channels are 1-based.
 		int channelCount = loader.channelNames().size();
-		double max[] = new double[channelCount]; // track maximum intensity in each channel for display calibration
+		final double max[] = new double[channelCount]; // track maximum intensity in each channel for display calibration
 		for (String channelName : loader.channelNames()) {
             max[channelNum - 1] = -Double.MAX_VALUE;
-			org.janelia.it.jacs.shared.ffmpeg.ImageStack h5jImageStack = loader.extract(channelName);
+			final org.janelia.it.jacs.shared.ffmpeg.ImageStack h5jImageStack = loader.extract(channelName);
 			// Scoop whole-product data from the first channel.
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
@@ -100,27 +105,39 @@ public class FijiAdapter {
                     IJ.showStatus("Loading volume...");
                 }
             }
-            rtnVal.setC(channelNum);
 
+//            Map<Integer,byte[]> inputFrameData = new HashMap<Integer,byte[]>();
+//            for (int i = 0; i < fileInfo.nImages; i++) {
+//                
+//            }
+            
+            final Map<BPKey, ByteProcessor> byteProcessors = new HashMap<BPKey, ByteProcessor>();
 			// Iterate over all frames in the input.
+            ExecutorService buildBPPool = Executors.newFixedThreadPool(8);
+            final ExecutorService applyBPPool = Executors.newFixedThreadPool(1);
 			for (int i = 0; i < fileInfo.nImages; i++) {
-                if (!Interpreter.isBatchMode()) {
-                    IJ.showProgress(channelNum * fileInfo.nImages + i, channelCount * fileInfo.nImages);
-                }
-                Frame frame = h5jImageStack.frame(i);
-
-				byte[] nextBytes = frame.imageBytes.get(0);
-				
-				rtnVal.setZ(i + 1);
-                ByteProcessor cp = new ByteProcessor(fileInfo.width, fileInfo.height);
-                cp.setPixels(nextBytes);
-                rtnVal.setProcessor(cp);
-
-                cp.resetMinAndMax();
-                if (cp.getMax() > max[channelNum - 1]) {
-                    max[channelNum - 1] = cp.getMax();
-                }
-			}
+                final int finalChannelNum = channelNum;
+                final int finalI = i;
+                final FileInfo finalFileInfo = fileInfo;
+                final ImagePlus finalRtnVal = rtnVal;
+                buildBPPool.submit(new Runnable() {
+                    public void run() {
+                        final BPKey key = addByteProcessor(finalChannelNum, finalI, h5jImageStack, finalFileInfo, max, byteProcessors);                        
+                        applyBPPool.submit(new Runnable() {
+                            public void run() {
+                                applyProcessorToStack(byteProcessors, key, finalRtnVal, finalChannelNum);
+                            }
+                        });
+                    }
+                });
+            }
+            buildBPPool.shutdown();
+            buildBPPool.awaitTermination(600, TimeUnit.SECONDS);
+            applyBPPool.shutdown();
+            applyBPPool.awaitTermination(600, TimeUnit.SECONDS);
+            
+            IJ.log("ByteProcessor executor service completed for channel " + channelName);
+            
 			channelNum++;
 		}
         IJ.log("Width=" + fileInfo.width + ", height=" + fileInfo.height + ", nChannels=" + channelCount + ", nSlices=" + fileInfo.nImages);
@@ -155,6 +172,44 @@ public class FijiAdapter {
 		}
 		return rtnVal;
 	}
+
+    protected void applyProcessorToStack(final Map<BPKey, ByteProcessor> byteProcessors, BPKey key, ImagePlus rtnVal, int channelNum) {
+        ByteProcessor cp = byteProcessors.get(key);
+        int i = key.getZ();
+        rtnVal.setC(channelNum);
+        rtnVal.setZ(i + 1);
+        rtnVal.setProcessor(cp);
+    }
+
+    protected BPKey addByteProcessor(int channelNum, int i, ImageStack h5jImageStack, FileInfo fileInfo, double[] max, Map<BPKey, ByteProcessor> byteProcessors) {
+        BPKey key = new BPKey();
+        key.setChannelNumber(channelNum);
+        key.setZ(i);
+        ByteProcessor cp = createByteProcessor(key, h5jImageStack, fileInfo, max);
+        byteProcessors.put(key, cp);
+        return key;
+    }
+
+    protected ByteProcessor createByteProcessor(
+            BPKey key,
+            ImageStack h5jImageStack, 
+            FileInfo fileInfo, 
+            double[] max
+    ) {
+//                if (!Interpreter.isBatchMode()) {
+//                    IJ.showProgress(channelNum * fileInfo.nImages + i, channelCount * fileInfo.nImages);
+//                }
+        int i = key.getZ();
+        Frame frame = h5jImageStack.frame(i);
+        byte[] nextBytes = frame.imageBytes.get(0);
+        ByteProcessor cp = new ByteProcessor(fileInfo.width, fileInfo.height);
+        cp.setPixels(nextBytes);
+        cp.resetMinAndMax();
+        if (cp.getMax() > max[key.getChannelNumber() - 1]) {
+            max[key.getChannelNumber() - 1] = cp.getMax();
+        }
+        return cp;
+    }
 
 	protected int intValue(byte[] packagedBytes, int j) {
 		return packagedBytes[j] < 0 ? 256 + packagedBytes[j] : packagedBytes[j];
@@ -192,12 +247,58 @@ public class FijiAdapter {
 		rtnVal.width = h5jImageStack.width();
 		rtnVal.height = h5jImageStack.height();
 		rtnVal.nImages = h5jImageStack.getNumFrames();
-        IJ.log("FileInfo: n-images=" + rtnVal.nImages);
 		rtnVal.intelByteOrder = true;
 		rtnVal.offset = 0;
 		rtnVal.longOffset = rtnVal.offset;
         rtnVal.pixelDepth = 8;
 		return rtnVal;
 	}
+    
+    private static class BPKey {
+        private int channelNumber;
+        private int z;
+
+        public boolean equals(Object other) {
+            if (other == null || ! (other instanceof BPKey)) {
+                return false;
+            }
+            else {
+                BPKey otherKey = (BPKey)other;
+                return otherKey.getChannelNumber() == getChannelNumber() && otherKey.getZ() == getZ();
+            }
+        }
+        
+        public int hashCode() {
+            return (z << 8) & channelNumber;
+        }
+        
+        /**
+         * @return the channelNumber
+         */
+        public int getChannelNumber() {
+            return channelNumber;
+        }
+
+        /**
+         * @param channelNumber the channelNumber to set
+         */
+        public void setChannelNumber(int channelNumber) {
+            this.channelNumber = channelNumber;
+        }
+
+        /**
+         * @return the z
+         */
+        public int getZ() {
+            return z;
+        }
+
+        /**
+         * @param z the z to set
+         */
+        public void setZ(int z) {
+            this.z = z;
+        }
+    }
 
 }

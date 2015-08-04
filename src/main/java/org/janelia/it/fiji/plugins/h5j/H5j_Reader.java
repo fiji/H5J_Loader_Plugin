@@ -56,10 +56,8 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
                     if (asImage) {
                         // This reader will act as the image. Its 'show' will
                         // be the natural flow of this type of plugin.
-                        IJ.log("Cloning into THIS.");
                         cloneStack(infileImage, this, asHyperstack);
                     } else {
-                        IJ.log("Showing as image.");
                         infileImage.show();
                     }
                 }
@@ -115,7 +113,6 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
             else {
                 rtnVal = new File(putativeFilePath);
                 if (rtnVal.canRead()) {
-                    IJ.log("Reading file into plugin-as-image: " + putativeFilePath);
                     asImage = true;
                 } else {
                     rtnVal = showFileChooser();
