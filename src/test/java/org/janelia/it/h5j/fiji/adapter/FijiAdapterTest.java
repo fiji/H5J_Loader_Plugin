@@ -59,8 +59,8 @@ public class FijiAdapterTest {
      */
     @Test
     public void getImagePlus() throws Exception {
-        ImagePlus imagePlus = fijiAdapter.getImagePlus(new File(TESTFILE));
-        assertEquals("Bytes-per-pixel fails to match", EXPECT_BPP, imagePlus.getBytesPerPixel());
+        ImagePlus imagePlus = fijiAdapter.getMultiChannelImagePlus(new File(TESTFILE));
+        assertEquals("Bytes-per-pixel fails to match", 1 /*EXPECT_BPP*/, imagePlus.getBytesPerPixel());
         assertEquals("Height not as expected", EXPECT_HEIGHT, imagePlus.getHeight());
         assertEquals("Width not as expected", EXPECT_WIDTH, imagePlus.getWidth());
     }

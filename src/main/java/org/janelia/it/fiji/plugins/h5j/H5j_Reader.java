@@ -27,8 +27,12 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
     private static final String MESSAGE_PREFIX = "HHMI_H5J_Reader: ";
     private static final String EXTENSION = ".h5j";
     public static final String INFO_PROPERTY = "Info";
+    private static final boolean HYPERSTACK = true;
     
     private boolean asImage = false;
+    private boolean asHyperstack = HYPERSTACK;
+    
+    private JFileChooser fileChooser;
 
     @Override
     public void run(String string) {
@@ -40,15 +44,24 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
         else {
             try {
                 File infile = ensureFileAvailable(string);
-                FijiAdapter adapter = new FijiAdapter();
-                ImagePlus infileImage = adapter.getImagePlus(infile);
-                if (asImage) {
-                    // This reader will act as the image. Its 'show' will
-                    // be the natural flow of this type of plugin.
-                    cloneStack(infileImage, this);
-                }
-                else {
-                    infileImage.show();
+                if (infile != null) {
+                    IJ.log("Opening " + infile.toString());
+                    FijiAdapter adapter = new FijiAdapter();
+                    ImagePlus infileImage = null;
+                    if (asHyperstack) {
+                        infileImage = adapter.getMultiChannelImagePlus(infile);
+                    } else {
+                        infileImage = adapter.getImagePlus(infile);
+                    }
+                    if (asImage) {
+                        // This reader will act as the image. Its 'show' will
+                        // be the natural flow of this type of plugin.
+                        IJ.log("Cloning into THIS.");
+                        cloneStack(infileImage, this, asHyperstack);
+                    } else {
+                        IJ.log("Showing as image.");
+                        infileImage.show();
+                    }
                 }
                 
             } catch (Exception ex) {
@@ -60,12 +73,22 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
     }
     
     /**
+     * Tell this image to be produced as a separation of channels, or
+     * as a merging of all channels.
+     * 
+     * @param asHyperstack T=separate/F=merge
+     */
+    public void setAsHyperStack(boolean asHyperstack) {
+        this.asHyperstack = asHyperstack;
+    }
+    
+    /**
      * This can be used to clone one stack into another.
      * 
      * @param infileImage
      * @param target 
      */
-    private void cloneStack(ImagePlus infileImage, ImagePlus target) {
+    private void cloneStack(ImagePlus infileImage, ImagePlus target, boolean hyperStack) {
         // Now, 'clone' this image plus back to the one implemented
         // by this plugin.
         target.setStack(infileImage.getTitle(), infileImage.getStack());
@@ -75,17 +98,31 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
             target.setProperty(INFO_PROPERTY, objInfo);
         }
         target.setFileInfo(infileImage.getFileInfo());
+        if (hyperStack) {
+            target.setDimensions(infileImage.getNChannels(), infileImage.getNSlices(), infileImage.getNFrames());
+        }
+        target.setOpenAsHyperStack(hyperStack);
+
     }
     
-    private File ensureFileAvailable( String putativeFilePath ) {
-        File rtnVal = new File(putativeFilePath);
+    private File ensureFileAvailable( String putativeFilePath ) {        
+        File rtnVal = null;
         try {
-            if (! rtnVal.canRead()) {
-                rtnVal = showFileChooser();                    
+            if (putativeFilePath == null || putativeFilePath.trim().equals("")) {
+                rtnVal = showFileChooser();
+                asImage = false;
             }
             else {
-                asImage = true;
+                rtnVal = new File(putativeFilePath);
+                if (rtnVal.canRead()) {
+                    IJ.log("Reading file into plugin-as-image: " + putativeFilePath);
+                    asImage = true;
+                } else {
+                    rtnVal = showFileChooser();
+                    asImage = false;
+                }
             }
+            
         } catch ( Exception ex ) {
             IJ.showMessage(MESSAGE_PREFIX+"unable to open " + putativeFilePath);
         }
@@ -93,30 +130,48 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
         return rtnVal;
     }
     
+    /**
+     * Capture user's file choice.  Forces the hyperstack option off, so that
+     * fully-merged files are shown.
+     * 
+     * @return user-chosen file.
+     * @throws HeadlessException 
+     */
     private File showFileChooser() throws HeadlessException {
         // Will replace the file with a user input.
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.addChoosableFileFilter(new Hj5FileFilter());
-        File rtnVal;
-        switch (fileChooser.showDialog(IJ.getTextPanel(), "Open")) {
-            case JFileChooser.CANCEL_OPTION :
-                rtnVal = null;
-                break;
-            case JFileChooser.ERROR_OPTION :
-                rtnVal = null;
-                IJ.error("Failed to open H5J File.");
-                break;
-            case JFileChooser.APPROVE_OPTION :
-                rtnVal = fileChooser.getSelectedFile();
-                break;
-            default:
-                rtnVal = null;
-                break;
+        try {
+            if (fileChooser == null) {
+                fileChooser = new JFileChooser();
+                fileChooser.addChoosableFileFilter(new H5jFileFilter());
+            }
+            File rtnVal;
+            IJ.log("Opening file manually.");
+            final int dialogResult = fileChooser.showOpenDialog(null);
+            switch (dialogResult) {
+                case JFileChooser.CANCEL_OPTION:
+                    rtnVal = null;
+                    break;
+                case JFileChooser.ERROR_OPTION:
+                    rtnVal = null;
+                    IJ.error("Failed to open H5J File.");
+                    break;
+                case JFileChooser.APPROVE_OPTION:
+                    this.setAsHyperStack(false);
+                    rtnVal = fileChooser.getSelectedFile();
+                    break;
+                default:
+                    rtnVal = null;
+                    break;
+            }
+            return rtnVal;
+        } catch (Exception ex) {
+            IJ.log("Exception encountered: " + ex.getMessage());
+            ex.printStackTrace();
+            return null;
         }
-        return rtnVal;
     }
 
-    private static class Hj5FileFilter extends FileFilter {
+    private static class H5jFileFilter extends FileFilter {
 
         @Override
         public boolean accept(File path) {

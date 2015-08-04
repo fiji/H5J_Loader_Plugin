@@ -59,8 +59,7 @@ public class H5JLoader
         return _image;
     }
 
-    public ImageStack extract(String channelID) throws Exception
-    {
+    public ImageStack extract(String channelID) throws Exception {
         IHDF5OpaqueReader channel = _reader.opaque();
         byte[] data = channel.readArray(CHANNELS_QUERY_PATH + "/" + channelID);
 
@@ -75,6 +74,9 @@ public class H5JLoader
     }
 
     private void extractAttributes() {
+        if (_image == null) {
+            _image = new ImageStack();
+        }
         IHDF5ReaderConfigurator conf = HDF5Factory.configureForReading(_filename);
         conf.performNumericConversions();
         IHDF5Reader ihdf5reader = conf.reader();
