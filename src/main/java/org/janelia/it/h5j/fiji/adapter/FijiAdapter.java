@@ -78,6 +78,9 @@ public class FijiAdapter {
 		int channelCount = loader.channelNames().size();
 		final double max[] = new double[channelCount]; // track maximum intensity in each channel for display calibration
 		for (String channelName : loader.channelNames()) {
+            if (!Interpreter.isBatchMode()) {
+                IJ.showProgress(channelNum, channelCount);
+            }
             max[channelNum - 1] = -Double.MAX_VALUE;
 			final org.janelia.it.jacs.shared.ffmpeg.ImageStack h5jImageStack = loader.extract(channelName);
 			// Scoop whole-product data from the first channel.
@@ -106,11 +109,6 @@ public class FijiAdapter {
                 }
             }
 
-//            Map<Integer,byte[]> inputFrameData = new HashMap<Integer,byte[]>();
-//            for (int i = 0; i < fileInfo.nImages; i++) {
-//                
-//            }
-            
             final Map<BPKey, ByteProcessor> byteProcessors = new HashMap<BPKey, ByteProcessor>();
 			// Iterate over all frames in the input.
             ExecutorService buildBPPool = Executors.newFixedThreadPool(8);
@@ -173,7 +171,7 @@ public class FijiAdapter {
 		return rtnVal;
 	}
 
-    protected void applyProcessorToStack(final Map<BPKey, ByteProcessor> byteProcessors, BPKey key, ImagePlus rtnVal, int channelNum) {
+    private void applyProcessorToStack(final Map<BPKey, ByteProcessor> byteProcessors, BPKey key, ImagePlus rtnVal, int channelNum) {
         ByteProcessor cp = byteProcessors.get(key);
         int i = key.getZ();
         rtnVal.setC(channelNum);
@@ -181,7 +179,7 @@ public class FijiAdapter {
         rtnVal.setProcessor(cp);
     }
 
-    protected BPKey addByteProcessor(int channelNum, int i, ImageStack h5jImageStack, FileInfo fileInfo, double[] max, Map<BPKey, ByteProcessor> byteProcessors) {
+    private BPKey addByteProcessor(int channelNum, int i, ImageStack h5jImageStack, FileInfo fileInfo, double[] max, Map<BPKey, ByteProcessor> byteProcessors) {
         BPKey key = new BPKey();
         key.setChannelNumber(channelNum);
         key.setZ(i);
@@ -190,15 +188,12 @@ public class FijiAdapter {
         return key;
     }
 
-    protected ByteProcessor createByteProcessor(
+    private ByteProcessor createByteProcessor(
             BPKey key,
             ImageStack h5jImageStack, 
             FileInfo fileInfo, 
             double[] max
     ) {
-//                if (!Interpreter.isBatchMode()) {
-//                    IJ.showProgress(channelNum * fileInfo.nImages + i, channelCount * fileInfo.nImages);
-//                }
         int i = key.getZ();
         Frame frame = h5jImageStack.frame(i);
         byte[] nextBytes = frame.imageBytes.get(0);
