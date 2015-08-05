@@ -86,6 +86,7 @@ public class FijiAdapter {
 			// Scoop whole-product data from the first channel.
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
+                IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() +", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
 
 				int bytesPerPixel = h5jImageStack.getBytesPerPixel() / channelCount;  // Adjusting
 				if (bytesPerPixel != 1) {
@@ -93,8 +94,10 @@ public class FijiAdapter {
 				}
 				rtnVal = NewImage.createImage(
 						inputFile.getName(),              //Name
-						fileInfo.width,                   //Width
-						fileInfo.height,                  //Height
+						fileInfo.width - h5jImageStack.getPaddingRight(),
+                                                          //Width
+						fileInfo.height - h5jImageStack.getPaddingBottom(),
+                                                          //Height
 						channelCount * fileInfo.nImages,  //nSlices
 						8 * bytesPerPixel,                //BitDepth
                         NewImage.FILL_BLACK               //Options
@@ -191,14 +194,43 @@ public class FijiAdapter {
     private ByteProcessor createByteProcessor(
             BPKey key,
             ImageStack h5jImageStack, 
-            FileInfo fileInfo, 
+            final FileInfo fileInfo, 
             double[] max
     ) {
-        int i = key.getZ();
-        Frame frame = h5jImageStack.frame(i);
-        byte[] nextBytes = frame.imageBytes.get(0);
-        ByteProcessor cp = new ByteProcessor(fileInfo.width, fileInfo.height);
-        cp.setPixels(nextBytes);
+        int z = key.getZ();
+        Frame frame = h5jImageStack.frame(z);
+        final byte[] nextBytes = frame.imageBytes.get(0);
+        final int unpaddedWidth = fileInfo.width - h5jImageStack.getPaddingRight();
+        final int unpaddedHeight = fileInfo.height - h5jImageStack.getPaddingBottom();
+        byte[] outputBytes = null;
+        if (h5jImageStack.getPaddingRight() == 0  &&  h5jImageStack.getPaddingBottom() == 0) {
+            outputBytes = nextBytes;
+        }
+        else {
+            ExecutorService copyPool = Executors.newFixedThreadPool(8);
+            final byte[] targetBytes = new byte[unpaddedWidth * unpaddedHeight];
+            outputBytes = targetBytes; 
+            for (int i = 0; i < unpaddedHeight; i++) {
+                final int finalI = i;
+                Runnable submissible = new Runnable() {
+                    public void run() {
+                        int srcPos = (finalI * fileInfo.width);
+                        int destPos = (finalI * unpaddedWidth);
+                        System.arraycopy(nextBytes, srcPos, targetBytes, destPos, unpaddedWidth);
+                    }
+                };
+                copyPool.submit(submissible);
+            }
+            copyPool.shutdown();
+            try {
+                copyPool.awaitTermination(60, TimeUnit.SECONDS);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        ByteProcessor cp = new ByteProcessor(unpaddedWidth, unpaddedHeight);
+        
+        cp.setPixels(outputBytes);
         cp.resetMinAndMax();
         if (cp.getMax() > max[key.getChannelNumber() - 1]) {
             max[key.getChannelNumber() - 1] = cp.getMax();
