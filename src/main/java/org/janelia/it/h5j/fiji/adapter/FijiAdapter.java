@@ -89,6 +89,11 @@ public class FijiAdapter {
                 IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() +", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
 
 				int bytesPerPixel = h5jImageStack.getBytesPerPixel() / channelCount;  // Adjusting
+                // Assume exactly 1, if the value is not given.
+                if (bytesPerPixel == 0) {
+                    IJ.log("No bytes-per-pixel value available.  Assuming 1 byte/pixel.");
+                    bytesPerPixel = 1;
+                }
 				if (bytesPerPixel != 1) {
 					throw new Exception("Unexpected value for bytes-per-pixel: " + bytesPerPixel + ", only value of 1 acceptable.");
 				}
