@@ -16,6 +16,7 @@ import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import org.janelia.it.jacs.shared.ffmpeg.*;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +29,8 @@ import java.util.concurrent.TimeUnit;
  * @author fosterl
  */
 public class FijiAdapter {
+    public static final int POOL_TIMEOUT_IN_SECONDS = 1200;    
+    public static final int STD_THREAD_POOL_SIZE = 8;
 
 	public ImagePlus getImagePlus(File inputFile) throws Exception {
 		Calibration calibration = createCalibration();
@@ -117,9 +120,10 @@ public class FijiAdapter {
                 }
             }
 
-            final Map<BPKey, ByteProcessor> byteProcessors = new HashMap<BPKey, ByteProcessor>();
+            final Map<BPKey, ByteProcessor> byteProcessors =
+                    Collections.synchronizedMap(new HashMap<BPKey, ByteProcessor>());
 			// Iterate over all frames in the input.
-            ExecutorService buildBPPool = Executors.newFixedThreadPool(8);
+            ExecutorService buildBPPool = Executors.newFixedThreadPool(STD_THREAD_POOL_SIZE);
             final ExecutorService applyBPPool = Executors.newFixedThreadPool(1);
 			for (int i = 0; i < fileInfo.nImages; i++) {
                 final int finalChannelNum = channelNum;
@@ -138,9 +142,9 @@ public class FijiAdapter {
                 });
             }
             buildBPPool.shutdown();
-            buildBPPool.awaitTermination(600, TimeUnit.SECONDS);
+            buildBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
             applyBPPool.shutdown();
-            applyBPPool.awaitTermination(600, TimeUnit.SECONDS);
+            applyBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
             
             IJ.log("ByteProcessor executor service completed for channel " + channelName);
             
@@ -212,7 +216,7 @@ public class FijiAdapter {
             outputBytes = nextBytes;
         }
         else {
-            ExecutorService copyPool = Executors.newFixedThreadPool(8);
+            ExecutorService copyPool = Executors.newFixedThreadPool(STD_THREAD_POOL_SIZE);
             final byte[] targetBytes = new byte[unpaddedWidth * unpaddedHeight];
             outputBytes = targetBytes; 
             for (int i = 0; i < unpaddedHeight; i++) {
@@ -228,7 +232,7 @@ public class FijiAdapter {
             }
             copyPool.shutdown();
             try {
-                copyPool.awaitTermination(60, TimeUnit.SECONDS);
+                copyPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
