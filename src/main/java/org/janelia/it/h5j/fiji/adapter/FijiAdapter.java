@@ -89,12 +89,16 @@ public class FijiAdapter {
 			// Scoop whole-product data from the first channel.
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
-                IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() +", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
+				if (!Interpreter.isBatchMode()) {
+					IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() + ", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
+				}
 
 				int bytesPerPixel = h5jImageStack.getBytesPerPixel() / channelCount;  // Adjusting
                 // Assume exactly 1, if the value is not given.
                 if (bytesPerPixel == 0) {
-                    IJ.log("No bytes-per-pixel value available.  Assuming 1 byte/pixel.");
+					if (!Interpreter.isBatchMode()) {
+	                    IJ.log("No bytes-per-pixel value available.  Assuming 1 byte/pixel.");
+					}
                     bytesPerPixel = 1;
                 }
 				if (bytesPerPixel != 1) {
@@ -113,11 +117,10 @@ public class FijiAdapter {
 
 				rtnVal = new CompositeImage(rtnVal, CompositeImage.COMPOSITE);
                 rtnVal.setDimensions(channelCount, fileInfo.nImages, 1);
-                IJ.log("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
+				if (!Interpreter.isBatchMode()) {
+					IJ.log("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
+				}
 				rtnVal.setOpenAsHyperStack(true);
-                if (!Interpreter.isBatchMode()) {
-                    IJ.showStatus("Loading volume...");
-                }
             }
 
             final Map<BPKey, ByteProcessor> byteProcessors =
@@ -145,17 +148,17 @@ public class FijiAdapter {
             buildBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
             applyBPPool.shutdown();
             applyBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-            
-            IJ.log("ByteProcessor executor service completed for channel " + channelName);
+
+			if (!Interpreter.isBatchMode()) {
+	            IJ.log("ByteProcessor executor service completed for channel " + channelName);
+			}		
             
 			channelNum++;
 		}
-        IJ.log("Width=" + fileInfo.width + ", height=" + fileInfo.height + ", nChannels=" + channelCount + ", nSlices=" + fileInfo.nImages);
 
         if (!Interpreter.isBatchMode()) {
+	        IJ.log("Width=" + fileInfo.width + ", height=" + fileInfo.height + ", nChannels=" + channelCount + ", nSlices=" + fileInfo.nImages);
             IJ.showStatus("Volume load complete.");
-        }
-        if (!Interpreter.isBatchMode()) {
             IJ.showProgress(1.0);
         }
         

@@ -45,7 +45,6 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
             try {
                 File infile = ensureFileAvailable(string);
                 if (infile != null) {
-                    IJ.log("Opening " + infile.toString());
                     FijiAdapter adapter = new FijiAdapter();
                     ImagePlus infileImage = null;
                     if (asHyperstack) {
@@ -142,7 +141,6 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
                 fileChooser.addChoosableFileFilter(new H5jFileFilter());
             }
             File rtnVal;
-            IJ.log("Opening file manually.");
             final int dialogResult = fileChooser.showOpenDialog(null);
             switch (dialogResult) {
                 case JFileChooser.CANCEL_OPTION:
@@ -162,7 +160,7 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
             }
             return rtnVal;
         } catch (Exception ex) {
-            IJ.log("Exception encountered: " + ex.getMessage());
+            IJ.error("Exception encountered: " + ex.getMessage());
             ex.printStackTrace();
             return null;
         }
