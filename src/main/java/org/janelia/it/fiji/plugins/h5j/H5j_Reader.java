@@ -66,7 +66,6 @@ public class H5j_Reader extends ImagePlus implements PlugIn {
                 IJ.showMessage(MESSAGE_PREFIX + "Problem reading file data.  Messsage is '" + ex.getLocalizedMessage() + "'.");
             }
         }
-        //IJ.showMessage(MESSAGE_PREFIX + "invoked.");                
     }
     
     /**

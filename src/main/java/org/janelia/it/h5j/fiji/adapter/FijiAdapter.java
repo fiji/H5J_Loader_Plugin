@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 public class FijiAdapter {
     public static final int POOL_TIMEOUT_IN_SECONDS = 1200;    
     public static final int STD_THREAD_POOL_SIZE = 8;
+    
+    private static final boolean LOG_OK = false;
 
 	public ImagePlus getImagePlus(File inputFile) throws Exception {
 		Calibration calibration = createCalibration();
@@ -89,14 +91,14 @@ public class FijiAdapter {
 			// Scoop whole-product data from the first channel.
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
-				if (!Interpreter.isBatchMode()) {
+				if (!Interpreter.isBatchMode()  &&  LOG_OK) {
 					IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() + ", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
 				}
 
 				int bytesPerPixel = h5jImageStack.getBytesPerPixel() / channelCount;  // Adjusting
                 // Assume exactly 1, if the value is not given.
                 if (bytesPerPixel == 0) {
-					if (!Interpreter.isBatchMode()) {
+					if (!Interpreter.isBatchMode()  &&  LOG_OK) {
 	                    IJ.log("No bytes-per-pixel value available.  Assuming 1 byte/pixel.");
 					}
                     bytesPerPixel = 1;
@@ -117,7 +119,7 @@ public class FijiAdapter {
 
 				rtnVal = new CompositeImage(rtnVal, CompositeImage.COMPOSITE);
                 rtnVal.setDimensions(channelCount, fileInfo.nImages, 1);
-				if (!Interpreter.isBatchMode()) {
+				if (!Interpreter.isBatchMode()  &&  LOG_OK) {
 					IJ.log("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
 				}
 				rtnVal.setOpenAsHyperStack(true);
@@ -149,14 +151,14 @@ public class FijiAdapter {
             applyBPPool.shutdown();
             applyBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
-			if (!Interpreter.isBatchMode()) {
+			if (!Interpreter.isBatchMode()  &&  LOG_OK) {
 	            IJ.log("ByteProcessor executor service completed for channel " + channelName);
 			}		
             
 			channelNum++;
 		}
 
-        if (!Interpreter.isBatchMode()) {
+        if (!Interpreter.isBatchMode()  &&  LOG_OK) {
 	        IJ.log("Width=" + fileInfo.width + ", height=" + fileInfo.height + ", nChannels=" + channelCount + ", nSlices=" + fileInfo.nImages);
             IJ.showStatus("Volume load complete.");
             IJ.showProgress(1.0);
