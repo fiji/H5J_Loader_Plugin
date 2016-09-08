@@ -68,6 +68,7 @@ public class FijiAdapter {
 		}
 		rtnVal.setFileInfo(fileInfo);
 		rtnVal.setCalibration(calibration);
+        h5jImageStack.release();
 		return rtnVal;
 	}
 
@@ -156,6 +157,7 @@ public class FijiAdapter {
 			}		
             
 			channelNum++;
+            h5jImageStack.release();
 		}
 
         if (!Interpreter.isBatchMode()  &&  LOG_OK) {

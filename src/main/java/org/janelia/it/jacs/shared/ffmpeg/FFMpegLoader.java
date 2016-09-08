@@ -98,16 +98,13 @@ public class FFMpegLoader
         return _image;
     }
 
-    public void release() throws Exception {
+    public void close() throws Exception {
         if (pkt != null && pkt2 != null) {
             if (pkt2.size() > 0) {
                 av_free_packet(pkt);
             }
             pkt = pkt2 = null;
         }
-
-        // Free the Image
-        _image.release();
 
         // Close the video codec
         if (_video_codec != null) {
@@ -127,10 +124,16 @@ public class FFMpegLoader
         }
 
         got_frame = null;
-        _image = null;
         _frame_grabbed = false;
         _time_stamp = 0;
         frameNumber = 0;
+    }
+
+    public void release() throws Exception {
+         // Free the Image
+        _image.release();
+
+        _image = null;
     }
 
     @Override

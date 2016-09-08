@@ -40,6 +40,8 @@ public class Frame {
             picture = null;
         }
 
+        image = null;
+        opaque = null;
         imageBytes.clear();
     }
 

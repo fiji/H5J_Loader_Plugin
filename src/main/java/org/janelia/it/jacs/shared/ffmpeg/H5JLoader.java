@@ -72,7 +72,9 @@ public class H5JLoader
         ImageStack stack = movie.getImage();
 
         extractAttributes(stack);
-        
+
+        movie.close();
+
         return stack;
     }
 
