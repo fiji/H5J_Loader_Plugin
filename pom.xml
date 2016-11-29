@@ -19,7 +19,7 @@
 
     <groupId>org.janelia</groupId>
     <artifactId>H5J_Loader_Plugin</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
 
     <name>plugins/H5J_Loader_Plugin.jar</name>
     <description>A Maven project implementing an ImageJ plugin</description>
