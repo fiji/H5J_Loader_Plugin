@@ -64,7 +64,7 @@
 	</ciManagement>
 
 	<properties>
-		<main-class>H5J_Loader</main-class>
+		<package-name>org.janelia.it</package-name>
 	</properties>
 
 	<repositories>
