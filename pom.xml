@@ -39,22 +39,25 @@
 		<developer>
 			<id>lesfoster</id>
 			<name>Les Foster</name>
-			<email>fosterl@janelia.hhmi.org</email>
-			<url>https://www.janelia.org/</url>
-			<organization>Janelia Research Campus</organization>
-			<organizationUrl>https://www.janelia.org/</organizationUrl>
+			<url>https://imagej.net/User:Fosterl</url>
 			<roles>
-				<role>developer</role>
+				<role>founder</role>
+				<role>lead</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
 			</roles>
-			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<url>https://imagej.net/User:Rueden</url>
+			<roles>
+				<role>maintainer</role>
+			</roles>
 		</developer>
 	</developers>
 	<contributors>
-		<contributor>
-			<name>Curtis Rueden</name>
-			<url>https://imagej.net/User:Rueden</url>
-			<properties><id>ctrueden</id></properties>
-		</contributor>
 		<contributor>
 			<name>Mark Bolstad</name>
 			<url>https://github.com/renderdude</url>
