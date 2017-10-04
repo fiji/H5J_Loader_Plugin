@@ -83,8 +83,8 @@
 		<url>https://github.com/fiji/H5J_Loader_Plugin/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/H5J_Loader_Plugin/</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/fiji/H5J_Loader_Plugin</url>
 	</ciManagement>
 
 	<properties>
