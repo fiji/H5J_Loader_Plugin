@@ -6,126 +6,126 @@
 * license terms ( http://license.janelia.org/license/jfrc_copyright_1_1.html ).
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>sc.fiji</groupId>
-        <artifactId>pom-fiji</artifactId>
-        <version>10.0.1</version>
-        <relativePath />
-    </parent>
+	<parent>
+		<groupId>sc.fiji</groupId>
+		<artifactId>pom-fiji</artifactId>
+		<version>10.0.1</version>
+		<relativePath />
+	</parent>
 
-    <groupId>org.janelia</groupId>
-    <artifactId>H5J_Loader_Plugin</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+	<groupId>org.janelia</groupId>
+	<artifactId>H5J_Loader_Plugin</artifactId>
+	<version>1.0.7-SNAPSHOT</version>
 
-    <name>plugins/H5J_Loader_Plugin.jar</name>
-    <description>A Maven project implementing an ImageJ plugin</description>
-    <organization>
-        <name>HHMI Janelia Research Campus</name>
-        <url>https://www.janelia.org/</url>
-    </organization>
-    <licenses>
-        <license>
-            <name>Janelia Farm Research Campus Software Copyright 1.1</name>
-            <distribution>repo</distribution>
-            <url>http://license.janelia.org/license/jfrc_copyright_1_1.html</url>
-        </license>
-    </licenses>
+	<name>plugins/H5J_Loader_Plugin.jar</name>
+	<description>A Maven project implementing an ImageJ plugin</description>
+	<organization>
+		<name>HHMI Janelia Research Campus</name>
+		<url>https://www.janelia.org/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Janelia Farm Research Campus Software Copyright 1.1</name>
+			<distribution>repo</distribution>
+			<url>http://license.janelia.org/license/jfrc_copyright_1_1.html</url>
+		</license>
+	</licenses>
 
-    <developers>
-        <developer>
-            <id>lesfoster</id>
-            <name>Les Foster</name>
-            <email>fosterl@janelia.hhmi.org</email>
-            <url>https://www.janelia.org/</url>
-            <organization>Janelia Research Campus</organization>
-            <organizationUrl>https://www.janelia.org/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>-5</timezone>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<id>lesfoster</id>
+			<name>Les Foster</name>
+			<email>fosterl@janelia.hhmi.org</email>
+			<url>https://www.janelia.org/</url>
+			<organization>Janelia Research Campus</organization>
+			<organizationUrl>https://www.janelia.org/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
 
-    <scm>
-        <connection>scm:git:git://github.com/fiji/H5j_loader-plugin</connection>
-        <developerConnection>scm:git:git@github.com:fiji/H5J_Loader_Plugin</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/fiji/H5J_Loader_Plugin</url>
-    </scm>
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/fiji/H5J_Loader_Plugin/issues</url>
-    </issueManagement>
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://jenkins.imagej.net/job/H5J_Loader_Plugin/</url>
-    </ciManagement>
+	<scm>
+		<connection>scm:git:git://github.com/fiji/H5j_loader-plugin</connection>
+		<developerConnection>scm:git:git@github.com:fiji/H5J_Loader_Plugin</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/fiji/H5J_Loader_Plugin</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/fiji/H5J_Loader_Plugin/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/H5J_Loader_Plugin/</url>
+	</ciManagement>
 
-    <properties>
-        <main-class>H5J_Loader</main-class>
-    </properties>
+	<properties>
+		<main-class>H5J_Loader</main-class>
+	</properties>
 
-    <repositories>
-        <!-- NB: for project parent -->
-        <repository>
-            <id>imagej.public</id>
-            <url>http://maven.imagej.net/content/groups/public</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<!-- NB: for project parent -->
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>net.imagej</groupId>
-            <artifactId>ij</artifactId>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>cisd</groupId>
-            <artifactId>jhdf5</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
-            <artifactId>ffmpeg</artifactId>
-            <version>2.6.1-0.11</version>
-        </dependency>
+		<dependency>
+			<groupId>cisd</groupId>
+			<artifactId>jhdf5</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>sc.fiji</groupId>
-            <artifactId>fiji-compat</artifactId>
-            <version>2.0.2</version>
-            <type>jar</type>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.bytedeco.javacpp-presets</groupId>
+			<artifactId>ffmpeg</artifactId>
+			<version>2.6.1-0.11</version>
+		</dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${main-class}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <argLine>-Xmx8G</argLine>
-                </configuration>
-            </plugin>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>fiji-compat</artifactId>
+			<version>2.0.2</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
 
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>${main-class}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<argLine>-Xmx8G</argLine>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>
