@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-* Copyright 2015 Howard Hughes Medical Institute.
+* Copyright 2018 Howard Hughes Medical Institute.
 * All rights reserved.
 * Use is subject to Janelia Farm Research Campus Software Copyright 1.1
 * license terms ( http://license.janelia.org/license/jfrc_copyright_1_1.html ).
@@ -17,7 +17,7 @@
 
 	<groupId>org.janelia</groupId>
 	<artifactId>H5J_Loader_Plugin</artifactId>
-	<version>1.0.8-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 
 	<name>plugins/H5J_Loader_Plugin.jar</name>
 	<description>A Maven project implementing an ImageJ plugin</description>
@@ -115,11 +115,6 @@
 			<artifactId>jhdf5</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.bytedeco.javacpp-presets</groupId>
-			<artifactId>ffmpeg</artifactId>
-			<version>2.6.1-0.11</version>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
