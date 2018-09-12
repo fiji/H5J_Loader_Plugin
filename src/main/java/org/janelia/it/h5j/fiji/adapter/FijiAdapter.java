@@ -102,7 +102,7 @@ public class FijiAdapter {
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
 				if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
-					IJ.log("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() + ", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
+					System.out.println("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() + ", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
 				}
 
 				bytesPerPixel = h5jImageStack.getBytesPerPixel();  // Adjusting
@@ -142,7 +142,7 @@ public class FijiAdapter {
 				rtnVal = new CompositeImage(rtnVal, CompositeImage.COMPOSITE);
                 rtnVal.setDimensions(channelCount, fileInfo.nImages, 1);
 				if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
-					IJ.log("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
+					System.out.println("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
 				}
 				rtnVal.setOpenAsHyperStack(true);
 				
@@ -201,23 +201,23 @@ public class FijiAdapter {
         }
         
         if (rtnVal != null) {
-        	if (bytesPerPixel == 2)
-        		IJ.run(rtnVal, "Divide...", "value=16 stack");
             final Calibration calibration = new Calibration(rtnVal);
             if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting calibration...");
-            rtnVal.setCalibration(calibration);
             calibration.fps = 20;
             if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("FPS: " + calibration.fps);
             if (spc != null) {
             	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting properties...");
-            	//IJ.run(rtnVal, "Properties...", "unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
+            	calibration.pixelWidth = spc[0];
+            	calibration.pixelHeight = spc[1];
+            	calibration.pixelDepth = spc[2];
+            	calibration.setUnit(unit);
             	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
             }
+            rtnVal.setCalibration(calibration);
 			// Adjust display range for each channel
             if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting display range...");
 			for (int c = 0; c < rtnVal.getNChannels(); ++c) {
 				rtnVal.setC(c + 1);
-				if (bytesPerPixel == 2) max[c] /= 16;
 				if (max[c] > 0) {
 					rtnVal.setDisplayRange(0, max[c]);
 					if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Ch."+c+" min=0 max="+max[c]);
@@ -360,6 +360,9 @@ public class FijiAdapter {
         ShortProcessor cp = new ShortProcessor(unpaddedWidth, unpaddedHeight);
         final short[] outputShorts = new short[unpaddedWidth * unpaddedHeight];
         ByteBuffer.wrap(outputBytes).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(outputShorts);
+        
+        for (int i = 0; i < outputShorts.length; i++)
+        	outputShorts[i] = (short) ((outputShorts[i] & 0xffff) / 16);
         
         cp.setPixels(outputShorts);
         cp.resetMinAndMax();
