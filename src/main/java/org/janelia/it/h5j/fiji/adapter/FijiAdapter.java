@@ -37,7 +37,7 @@ public class FijiAdapter {
     public static final int POOL_TIMEOUT_IN_SECONDS = 1200;    
     public static final int STD_THREAD_POOL_SIZE = 8;
     
-    private static final boolean LOG_OK = true;
+    private static final boolean LOG_OK = false;
 
 	public ImagePlus getImagePlus(File inputFile) throws Exception {
 		Calibration calibration = createCalibration();
@@ -101,7 +101,7 @@ public class FijiAdapter {
 			// Scoop whole-product data from the first channel.
 			if (rtnVal == null || fileInfo == null) {
 				fileInfo = createFileInfo(inputFile, h5jImageStack);
-				if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
+				if (LOG_OK) {
 					System.out.println("Padded width=" + fileInfo.width + ", width padding=" + h5jImageStack.getPaddingRight() + ", padded height=" + fileInfo.height + ", height padding=" + h5jImageStack.getPaddingBottom());
 				}
 
@@ -110,7 +110,7 @@ public class FijiAdapter {
 				//IJ.log("channelCount: "+channelCount);
                 // Assume exactly 1, if the value is not given.
                 if (bytesPerPixel == 0) {
-					if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
+					if (LOG_OK) {
 	                    IJ.log("No bytes-per-pixel value available.  Assuming 1 byte/pixel.");
 					}
                     bytesPerPixel = 1;
@@ -141,7 +141,7 @@ public class FijiAdapter {
 
 				rtnVal = new CompositeImage(rtnVal, CompositeImage.COMPOSITE);
                 rtnVal.setDimensions(channelCount, fileInfo.nImages, 1);
-				if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
+				if (LOG_OK) {
 					System.out.println("Setting dimensions: channelCount=" + channelCount + ", n-Images=" + fileInfo.nImages);
 				}
 				rtnVal.setOpenAsHyperStack(true);
@@ -187,7 +187,7 @@ public class FijiAdapter {
             applyBPPool.shutdown();
             applyBPPool.awaitTermination(POOL_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 
-			if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
+			if (LOG_OK) {
 				System.out.println("ByteProcessor executor service completed for channel " + channelName);
 			}		
             
@@ -195,51 +195,51 @@ public class FijiAdapter {
             h5jImageStack.release();
 		}
 
-        if (/*!Interpreter.isBatchMode()  &&  */LOG_OK) {
+        if (LOG_OK) {
         	System.out.println("Width=" + fileInfo.width + ", height=" + fileInfo.height + ", nChannels=" + channelCount + ", nSlices=" + fileInfo.nImages);
         	System.out.println("Volume load complete.");
         }
         
         if (rtnVal != null) {
             final Calibration calibration = new Calibration(rtnVal);
-            if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting calibration...");
+            if (LOG_OK) System.out.println("Setting calibration...");
             calibration.fps = 20;
-            if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("FPS: " + calibration.fps);
+            if (LOG_OK) System.out.println("FPS: " + calibration.fps);
             if (spc != null) {
-            	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting properties...");
+            	if (LOG_OK) System.out.println("Setting properties...");
             	calibration.pixelWidth = spc[0];
             	calibration.pixelHeight = spc[1];
             	calibration.pixelDepth = spc[2];
             	calibration.setUnit(unit);
-            	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
+            	if (LOG_OK) System.out.println("unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
             }
             rtnVal.setCalibration(calibration);
 			// Adjust display range for each channel
-            if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting display range...");
+            if (LOG_OK) System.out.println("Setting display range...");
 			for (int c = 0; c < rtnVal.getNChannels(); ++c) {
 				rtnVal.setC(c + 1);
 				if (max[c] > 0) {
 					rtnVal.setDisplayRange(0, max[c]);
-					if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Ch."+c+" min=0 max="+max[c]);
+					if (LOG_OK) System.out.println("Ch."+c+" min=0 max="+max[c]);
 					continue;
 				}
 				// I guess measuring max failed.
 				if (rtnVal.getBitDepth() > 8) {
 					rtnVal.setDisplayRange(0, 4095);
-					if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Ch."+c+" min=0 max="+4095);
+					if (LOG_OK) System.out.println("Ch."+c+" min=0 max="+4095);
 				} else {
 					rtnVal.setDisplayRange(0, 255);
-					if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Ch."+c+" min=0 max="+255);
+					if (LOG_OK) System.out.println("Ch."+c+" min=0 max="+255);
 				}
 			}
 			rtnVal.setC(1);
 			rtnVal.setZ(1);
 		}
-        if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Getting metadata...");
+        if (LOG_OK) System.out.println("Getting metadata...");
         String info = loader.getAllAttributeString("/");
-        if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("[ROOT]"+System.getProperty("line.separator")+info);
+        if (LOG_OK) System.out.println("[ROOT]"+System.getProperty("line.separator")+info);
         info += loader.getAllAttributeString("/Channels");
-        if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("[ALL]"+System.getProperty("line.separator")+info);
+        if (LOG_OK) System.out.println("[ALL]"+System.getProperty("line.separator")+info);
         rtnVal.setProperty("Info", info);
         
         loader.close();
