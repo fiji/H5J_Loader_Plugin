@@ -210,7 +210,7 @@ public class FijiAdapter {
             if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("FPS: " + calibration.fps);
             if (spc != null) {
             	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("Setting properties...");
-            	IJ.run(rtnVal, "Properties...", "unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
+            	//IJ.run(rtnVal, "Properties...", "unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
             	if (/*!Interpreter.isBatchMode() && */LOG_OK) System.out.println("unit="+unit+" pixel_width="+spc[0]+" pixel_height="+spc[1]+" voxel_depth="+spc[2]);
             }
 			// Adjust display range for each channel
