@@ -114,7 +114,12 @@
 			<groupId>cisd</groupId>
 			<artifactId>jhdf5</artifactId>
 		</dependency>
-
+		
+		<dependency>
+    		<groupId>org.bytedeco.javacpp-presets</groupId>
+    		<artifactId>ffmpeg</artifactId>
+    		<version>4.0.1-1.4.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
