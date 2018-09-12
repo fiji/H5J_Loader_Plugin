@@ -17,31 +17,26 @@ import static org.bytedeco.javacpp.avutil.*;
  */
 public class Frame {
     public boolean keyFrame;
-    public AVFrame image;
-    public Object opaque;
-    public AVFrame picture, picture_rgb;
-    public BytePointer buffer_rgb;
+    //public AVFrame image;
+    //public Object opaque;
+    public AVFrame picture = null, picture_rgb = null;
     public ArrayList<byte[]> imageBytes = new ArrayList<byte[]>();
 
     public void release() throws Exception {
         // Free the RGB image
-        if (buffer_rgb != null) {
-            av_free(buffer_rgb);
-            buffer_rgb = null;
-        }
         if (picture_rgb != null) {
-            av_free(picture_rgb);
+            av_frame_free(picture_rgb);
             picture_rgb = null;
         }
 
         // Free the native format picture frame
         if (picture != null) {
-            av_free(picture);
+        	av_frame_free(picture);
             picture = null;
         }
 
-        image = null;
-        opaque = null;
+        //image = null;
+        //opaque = null;
         imageBytes.clear();
     }
 

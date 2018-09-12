@@ -109,6 +109,33 @@ public class ImageStack
     {
         this._bytes_per_pixel = bytes_per_pixel;
     }
+    
+    public double[] getSpacings()
+    {
+    	double[] spcs = new double[3];
+    	spcs[0] = _spcx;
+    	spcs[1] = _spcy;
+    	spcs[2] = _spcz;
+    	
+        return spcs;
+    }
+    
+    public void setSpacings(double spcx, double spcy, double spcz)
+    {
+    	this._spcx = spcx;
+    	this._spcy = spcy;
+    	this._spcz = spcz;
+    }
+    
+    public String getUnit()
+    {
+    	return _unit;
+    }
+    
+    public void setUnit(String unit)
+    {
+    	this._unit = unit;
+    }
 
     /**
      * Return a byte arryay of the pixels of the ith frame/image in the stack
@@ -155,7 +182,7 @@ public class ImageStack
      * @param i - image index
      * @return the size of a line of data
      */
-    public int linesize(int i) { return _image.get(i).image.linesize(0); }
+    public int linesize(int i) { return _image.get(i).picture_rgb.linesize(0); }
 
     /**
      * Add a Frame to the end of the stack
@@ -201,6 +228,9 @@ public class ImageStack
         _height = 0;
         _width = 0;
     }
+    
+    public void setInfo(String info) { this._info = info; }
+    public String getInfo() { return this._info; }
 
     private int _height;
     private int _width;
@@ -209,6 +239,12 @@ public class ImageStack
     private int _padding_bottom;
 
     private int _bytes_per_pixel;
+    
+    private double _spcx = 1.0;
+    private double _spcy = 1.0;
+    private double _spcz = 1.0;
+    private String _unit = "";
+    private String _info = "";
 
     private ArrayList<Frame> _image = new ArrayList<Frame>();
 
