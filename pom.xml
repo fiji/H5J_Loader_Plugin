@@ -116,9 +116,9 @@
 		</dependency>
 		
 		<dependency>
-    		<groupId>org.bytedeco.javacpp-presets</groupId>
-    		<artifactId>ffmpeg-platform</artifactId>
-    		<version>4.0.1-1.4.2</version>
+			<groupId>org.bytedeco.javacpp-presets</groupId>
+			<artifactId>ffmpeg-platform</artifactId>
+			<version>4.1-1.4.4</version>
 		</dependency>
 
 		<dependency>
