@@ -111,8 +111,6 @@ public class FFMpegLoader
         };
         
         _format_context.pb(avio_alloc_context(_buffer, BUFFER_SIZE, 0, null, new ReadInput(ibytes), null, seeker));
-        AVInputFormat format = av_find_input_format(_buffer);
-        _format_context.iformat(format);
         _format_context.flags(_format_context.flags() | AVFMT_FLAG_CUSTOM_IO);
     }
 
@@ -319,6 +317,7 @@ public class FFMpegLoader
 
         // Dump information about file onto standard error
         av_dump_format(_format_context, 0, _filename, 0);
+        //av_log_set_level(AV_LOG_TRACE);
 
         // Find the first video and audio stream
         _video_stream = null;
@@ -499,6 +498,21 @@ public class FFMpegLoader
             	IJ.showProgress( (double)(channel_count*_frame_num + _frame_count) / (channel_num*_frame_num) );
             }
         }
+        
+        if ( _video_stream.nb_frames() > 0 && _image.getNumFrames() < _video_stream.nb_frames()) {
+        	int count = _image.getNumFrames();
+        	Frame lastframe = _image.frame(count-1);
+        	while (count < _video_stream.nb_frames()) {
+        		System.err.println("The last frame was dropped. Duplicating the second frame before the last... (Channel "+channel_count+")");
+        		_image.add(lastframe);
+        		count++;
+        	}
+        	_frame_count = count;
+        	if (!Interpreter.isBatchMode()) {
+            	IJ.showStatus("Loading H5J...");
+            	IJ.showProgress( (double)(channel_count*_frame_num + _frame_count) / (channel_num*_frame_num) );
+            }
+        }
     }
 
     public Frame grabFrame() throws Exception {
@@ -535,7 +549,6 @@ public class FFMpegLoader
              			throw new Exception("avcodec_send_packet failed");
              	    allocateFrame(frame);
              	    ret = avcodec_receive_frame(_video_codec, picture);
-             	    _frame_count++;
              	    if (ret >= 0) {
              	    	long pts = picture.best_effort_timestamp();
              	    	AVRational time_base = _video_stream.time_base();
@@ -546,6 +559,7 @@ public class FFMpegLoader
              	    	//frame.image = picture_rgb;
              	    	//frame.opaque = picture;
              	    	processImage(frame);
+             	    	_frame_count++;
              	    	done = true;
              	    } else if (ret == AVERROR_EAGAIN()) {
              	    	av_frame_free(picture);
@@ -561,7 +575,6 @@ public class FFMpegLoader
         	//System.out.println("f:  "+_frame_count+"   flush");
         	allocateFrame(frame);
      	    ret = avcodec_receive_frame(_video_codec, picture);
-     	    _frame_count++;
      	    if (ret >= 0) {
      	    	long pts = picture.best_effort_timestamp();
      	    	AVRational time_base = _video_stream.time_base();
@@ -572,6 +585,7 @@ public class FFMpegLoader
      	    	//frame.image = picture_rgb;
      	    	//frame.opaque = picture;
      	    	processImage(frame);
+     	    	_frame_count++;
      	    	done = true;
      	    } else 
      	    	return null;
