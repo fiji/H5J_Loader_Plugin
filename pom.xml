@@ -77,7 +77,7 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/fiji/H5J_Loader_Plugin</connection>
+		<connection>scm:git:https://github.com/fiji/H5J_Loader_Plugin</connection>
 		<developerConnection>scm:git:git@github.com:fiji/H5J_Loader_Plugin</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/fiji/H5J_Loader_Plugin</url>
