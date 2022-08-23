@@ -100,7 +100,9 @@
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
-		<ffmpeg-platform.version>4.1-1.4.4</ffmpeg-platform.version>
+		<javacpp.version>1.5.2</javacpp.version>
+		<ffmpeg.version>4.2.1-${javacpp.version}</ffmpeg.version>
+		<ffmpeg-platform.version>${ffmpeg.version}</ffmpeg-platform.version>
 	</properties>
 
 	<dependencies>
@@ -115,9 +117,21 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.bytedeco.javacpp-presets</groupId>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>ffmpeg</artifactId>
+			<version>${ffmpeg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacpp</artifactId>
+			<version>${javacpp.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg-platform</artifactId>
 			<version>${ffmpeg-platform.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>

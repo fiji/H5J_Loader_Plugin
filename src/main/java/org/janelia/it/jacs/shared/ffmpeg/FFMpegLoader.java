@@ -10,17 +10,29 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.PointerPointer;
-import org.bytedeco.javacpp.avcodec.AVCodecParameters;
+import org.bytedeco.ffmpeg.avcodec.AVCodec;
+import org.bytedeco.ffmpeg.avcodec.AVCodecContext;
+import org.bytedeco.ffmpeg.avcodec.AVPacket;
+import org.bytedeco.ffmpeg.avformat.AVFormatContext;
+import org.bytedeco.ffmpeg.avformat.AVStream;
+import org.bytedeco.ffmpeg.avformat.Read_packet_Pointer_BytePointer_int;
+import org.bytedeco.ffmpeg.avformat.Seek_Pointer_long_int;
+import org.bytedeco.ffmpeg.avutil.AVComponentDescriptor;
+import org.bytedeco.ffmpeg.avutil.AVDictionary;
+import org.bytedeco.ffmpeg.avutil.AVFrame;
+import org.bytedeco.ffmpeg.avutil.AVPixFmtDescriptor;
+import org.bytedeco.ffmpeg.avutil.AVRational;
+import org.bytedeco.ffmpeg.swscale.SwsContext;
 
 import ij.IJ;
 import ij.macro.Interpreter;
 
-import static org.bytedeco.javacpp.avformat.AVFormatContext.AVFMT_FLAG_CUSTOM_IO;
-import static org.bytedeco.javacpp.avcodec.*;
-import static org.bytedeco.javacpp.avdevice.avdevice_register_all;
-import static org.bytedeco.javacpp.avformat.*;
-import static org.bytedeco.javacpp.avutil.*;
-import static org.bytedeco.javacpp.swscale.*;
+import static org.bytedeco.ffmpeg.avformat.AVFormatContext.AVFMT_FLAG_CUSTOM_IO;
+import static org.bytedeco.ffmpeg.global.avcodec.*;
+import static org.bytedeco.ffmpeg.global.avdevice.avdevice_register_all;
+import static org.bytedeco.ffmpeg.global.avformat.*;
+import static org.bytedeco.ffmpeg.global.avutil.*;
+import static org.bytedeco.ffmpeg.global.swscale.*;
 
 class ReadInput extends Read_packet_Pointer_BytePointer_int {
     private byte[] _buffer;
@@ -278,7 +290,7 @@ public class FFMpegLoader
     }
 
     public void start() throws Exception {
-        synchronized (org.bytedeco.javacpp.avcodec.class) {
+        synchronized (org.bytedeco.ffmpeg.global.avcodec.class) {
             startUnsafe();
         }
     }

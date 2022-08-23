@@ -6,11 +6,10 @@
  */
 package org.janelia.it.jacs.shared.ffmpeg;
 
-import org.bytedeco.javacpp.BytePointer;
-
 import java.util.ArrayList;
 
-import static org.bytedeco.javacpp.avutil.*;
+import org.bytedeco.ffmpeg.avutil.AVFrame;
+import org.bytedeco.ffmpeg.global.avutil;
 
 /**
  * @author bostadm@janelia.hhmi.org
@@ -25,13 +24,13 @@ public class Frame {
     public void release() throws Exception {
         // Free the RGB image
         if (picture_rgb != null) {
-            av_frame_free(picture_rgb);
+            avutil.av_frame_free(picture_rgb);
             picture_rgb = null;
         }
 
         // Free the native format picture frame
         if (picture != null) {
-        	av_frame_free(picture);
+            avutil.av_frame_free(picture);
             picture = null;
         }
 
