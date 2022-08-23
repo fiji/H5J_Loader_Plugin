@@ -102,7 +102,7 @@
 
 		<javacpp.version>1.5.2</javacpp.version>
 		<ffmpeg.version>4.2.1-${javacpp.version}</ffmpeg.version>
-		<ffmpeg-platform.version>${ffmpeg.version}</ffmpeg-platform.version>
+		<ffmpeg.platform>${scijava.platform.family.longest}-${os.arch}</ffmpeg.platform>
 	</properties>
 
 	<dependencies>
@@ -129,8 +129,9 @@
 
 		<dependency>
 			<groupId>org.bytedeco</groupId>
-			<artifactId>ffmpeg-platform</artifactId>
-			<version>${ffmpeg-platform.version}</version>
+			<artifactId>ffmpeg</artifactId>
+			<version>${ffmpeg.version}</version>
+			<classifier>${ffmpeg.platform}</classifier>
 			<scope>runtime</scope>
 		</dependency>
 
