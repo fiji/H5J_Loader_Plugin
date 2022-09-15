@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>32.0.0-beta-7</version>
+		<version>33.2.0</version>
 		<relativePath />
 	</parent>
 
@@ -37,27 +37,21 @@
 
 	<developers>
 		<developer>
-			<id>lesfoster</id>
-			<name>Les Foster</name>
-			<url>https://imagej.net/User:Fosterl</url>
-			<roles>
-				<role>founder</role>
-				<role>lead</role>
-				<role>debugger</role>
-				<role>reviewer</role>
-				<role>support</role>
-			</roles>
-		</developer>
-		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<url>https://imagej.net/User:Rueden</url>
+			<url>https://imagej.net/people/ctrueden</url>
 			<roles>
 				<role>maintainer</role>
 			</roles>
 		</developer>
 	</developers>
 	<contributors>
+		<contributor>
+			<name>Les Foster</name>
+			<url>https://imagej.net/people/lesfoster</url>
+			<roles><role>founder</role></roles>
+			<properties><id>lesfoster</id></properties>
+		</contributor>
 		<contributor>
 			<name>Mark Bolstad</name>
 			<url>https://github.com/renderdude</url>
@@ -97,11 +91,10 @@
 		<license.licenseName>jfrc</license.licenseName>
 		<license.copyrightOwners>Howard Hughes Medical Institute.</license.copyrightOwners>
 
+		<scijava.surefire.args>-Xmx8g</scijava.surefire.args>
+
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
-
-		<javacpp.version>1.5.2</javacpp.version>
-		<ffmpeg.version>4.2.1-${javacpp.version}</ffmpeg.version>
 	</properties>
 
 	<dependencies>
@@ -118,19 +111,16 @@
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg</artifactId>
-			<version>${ffmpeg.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacpp</artifactId>
-			<version>${javacpp.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg</artifactId>
-			<version>${ffmpeg.version}</version>
-			<classifier>${scijava.natives.classifier.javacpp}</classifier>
+			<classifier>${scijava.natives.classifier.ffmpeg}</classifier>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -147,28 +137,4 @@
 			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>${main-class}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<argLine>-Xmx8G</argLine>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
 </project>
