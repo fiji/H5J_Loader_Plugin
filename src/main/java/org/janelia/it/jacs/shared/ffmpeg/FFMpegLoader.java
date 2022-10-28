@@ -65,9 +65,7 @@ public class FFMpegLoader
     static
     {
         // Register all formats and codecs
-        avcodec_register_all();
         avdevice_register_all();
-        av_register_all();
         avformat_network_init();
     }
 
