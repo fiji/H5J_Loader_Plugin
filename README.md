@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/fiji/H5J_Loader_Plugin/actions/workflows/build.yml/badge.svg)](https://github.com/fiji/H5J_Loader_Plugin/actions/workflows/build.yml)
+
 [![](https://github.com/fiji/H5J_Loader_Plugin/actions/workflows/build-main.yml/badge.svg)](https://github.com/fiji/H5J_Loader_Plugin/actions/workflows/build-main.yml)
 
 # h5j_loader-plugin

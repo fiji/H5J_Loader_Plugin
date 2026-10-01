@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>33.2.0</version>
+		<version>45.1.0</version>
 		<relativePath />
 	</parent>
 
@@ -86,6 +86,7 @@
 	</ciManagement>
 
 	<properties>
+		<scijava.jvm.version>8</scijava.jvm.version>
 		<package-name>org.janelia.it</package-name>
 
 		<license.licenseName>jfrc</license.licenseName>
