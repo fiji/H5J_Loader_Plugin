@@ -7,7 +7,14 @@
 
 package org.janelia.it.jacs.shared.ffmpeg;
 
-import ch.systemsx.cisd.hdf5.*;
+import ch.systemsx.cisd.hdf5.HDF5DataTypeInformation;
+import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.IHDF5DoubleReader;
+import ch.systemsx.cisd.hdf5.IHDF5LongReader;
+import ch.systemsx.cisd.hdf5.IHDF5OpaqueReader;
+import ch.systemsx.cisd.hdf5.IHDF5Reader;
+import ch.systemsx.cisd.hdf5.IHDF5ReaderConfigurator;
+import ch.systemsx.cisd.hdf5.IHDF5StringReader;
 
 import java.util.Arrays;
 import java.util.List;
